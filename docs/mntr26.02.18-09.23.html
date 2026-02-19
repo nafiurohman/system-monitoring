@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation Overview - System Monitor</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.8;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .back-link {
+            display: inline-block;
+            color: #3498db;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { color: #2c3e50; margin-bottom: 10px; font-size: 32px; }
+        h2 { color: #2c3e50; margin-top: 30px; margin-bottom: 15px; font-size: 24px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        h3 { color: #34495e; margin-top: 20px; margin-bottom: 10px; font-size: 20px; }
+        p { margin-bottom: 15px; color: #555; }
+        ul, ol { margin-left: 30px; margin-bottom: 15px; color: #555; }
+        li { margin-bottom: 8px; }
+        code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e74c3c;
+            border: 1px solid #eee;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+        }
+        pre code { background: none; padding: 0; border: none; color: #333; }
+        .version {
+            display: inline-block;
+            background: #ecf0f1;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 20px;
+            font-family: monospace;
+            color: #7f8c8d;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #95a5a6;
+            font-size: 12px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        strong { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Documentation List</a>
+        <h1>📖 System Monitor - Documentation Overview</h1>
+        <div class="version">mntr26.02.19-14.05</div>
+        
+        <h2>Tentang System Monitor</h2>
+        <p>System Monitor adalah platform monitoring server profesional yang dibangun dengan <strong>Python + Flask</strong> untuk performa optimal dan monitoring real-time. Aplikasi ini menyediakan monitoring lengkap untuk CPU, GPU, Memory, Network, Security, dan banyak lagi.</p>
+
+        <h2>Fitur Utama</h2>
+        
+        <h3>1. CPU Monitoring</h3>
+        <ul>
+            <li><strong>Per-Thread Monitoring</strong>: Monitoring usage setiap thread CPU secara real-time</li>
+            <li><strong>CPU Information</strong>: Model, cores, threads, frequency, cache size</li>
+            <li><strong>Temperature Monitoring</strong>: Monitoring suhu CPU dengan alert system</li>
+            <li><strong>Load Average</strong>: 1 minute, 5 minutes, 15 minutes</li>
+            <li><strong>Context Switches</strong>: Monitoring context switch rate</li>
+            <li><strong>Interrupt Rate</strong>: Monitoring interrupt per detik</li>
+        </ul>
+
+        <h3>2. GPU Monitoring</h3>
+        <ul>
+            <li><strong>Multi-Vendor Support</strong>: NVIDIA, AMD, Intel</li>
+            <li><strong>GPU Cards</strong>: Card terpisah untuk setiap GPU yang terdeteksi</li>
+            <li><strong>Dual Chart</strong>: Chart utilization dan temperature dalam satu tampilan</li>
+            <li><strong>Memory Monitoring</strong>: Total, used, free GPU memory</li>
+            <li><strong>Temperature</strong>: Real-time GPU temperature dengan color-coding</li>
+            <li><strong>Utilization</strong>: Persentase penggunaan GPU</li>
+        </ul>
+
+        <h3>3. Memory Monitoring</h3>
+        <ul>
+            <li><strong>Detailed Breakdown</strong>: Used, free, available, buffers, cached, shared</li>
+            <li><strong>Active/Inactive Memory</strong>: Monitoring memory yang aktif dan tidak aktif</li>
+            <li><strong>ZRAM Support</strong>: Detection dan monitoring ZRAM (Linux)</li>
+            <li><strong>Swap Monitoring</strong>: Total, used, free, sin, sout</li>
+            <li><strong>Visual Progress Bar</strong>: Color-coded (green/yellow/red)</li>
+        </ul>
+
+        <h3>4. Network Monitoring</h3>
+        <ul>
+            <li><strong>4 Status Indicators</strong>:
+                <ul>
+                    <li>Monitor Status (Active/Inactive)</li>
+                    <li>Internet Status (Connected/Disconnected via ping 8.8.8.8)</li>
+                    <li>Device Status (Online/Offline)</li>
+                    <li>Active Connections (Count)</li>
+                </ul>
+            </li>
+            <li><strong>Per-Interface Details</strong>: Upload/download rate real-time</li>
+            <li><strong>Packet Rate</strong>: Packets sent/received per second</li>
+            <li><strong>Error & Drops</strong>: Detection error dan packet drops</li>
+            <li><strong>Firewall Status</strong>: UFW, iptables, Windows Defender</li>
+        </ul>
+
+        <h3>5. Performance Deep Metrics</h3>
+        <ul>
+            <li><strong>Context Switches</strong>: Total context switch count</li>
+            <li><strong>Interrupts</strong>: Total interrupt count</li>
+            <li><strong>File Descriptors</strong>: Current usage vs limit</li>
+            <li><strong>Thread Count</strong>: Total threads di sistem</li>
+            <li><strong>Zombie Processes</strong>: Detection zombie process</li>
+            <li><strong>Resource Limits</strong>: Max open files, processes, sockets</li>
+        </ul>
+
+        <h3>6. Thermal & Power Monitoring</h3>
+        <ul>
+            <li><strong>CPU Temperature</strong>: Current, average, status (Normal/Warning/Critical)</li>
+            <li><strong>Battery Status</strong>: Percent, plugged status, time remaining</li>
+            <li><strong>Thermal Throttling</strong>: Detection throttling events</li>
+            <li><strong>Power Adapter</strong>: Detection power adapter status</li>
+        </ul>
+
+        <h3>7. Security Monitoring</h3>
+        <ul>
+            <li><strong>Security Score</strong>: 0-100 dengan label (Critical/Warning/Good/Excellent)</li>
+            <li><strong>Firewall Detection</strong>: UFW, iptables, Windows Defender</li>
+            <li><strong>Antivirus Status</strong>: ClamAV, Windows Defender</li>
+            <li><strong>Open Ports Analysis</strong>:
+                <ul>
+                    <li>Port number, Protocol (TCP/UDP)</li>
+                    <li>Service name, Process name</li>
+                    <li>Risk level (High/Medium/Low)</li>
+                    <li>Color-coded badges</li>
+                </ul>
+            </li>
+            <li><strong>Failed Login Attempts</strong>: Last 20 attempts</li>
+            <li><strong>Logged Users</strong>: Current users dengan timestamp</li>
+            <li><strong>Suspicious Processes</strong>: Detection process berbahaya</li>
+        </ul>
+
+        <h3>8. Process Manager</h3>
+        <ul>
+            <li><strong>Task Manager Style</strong>: Interface seperti Windows Task Manager</li>
+            <li><strong>Sortable Columns</strong>: PID, Name, User, CPU%, Memory%, Threads, Status</li>
+            <li><strong>Search/Filter</strong>: Real-time search functionality</li>
+            <li><strong>Color-Coded</strong>: Red (>50% CPU), Yellow (>25% CPU)</li>
+            <li><strong>Manual Refresh</strong>: Button refresh dengan visual feedback</li>
+            <li><strong>Performance Optimized</strong>: Limit 100 processes</li>
+        </ul>
+
+        <h3>9. Storage Browser</h3>
+        <ul>
+            <li><strong>Dropdown Navigation</strong>: Per partition dengan expand/collapse</li>
+            <li><strong>Large Files Detection</strong>: Files >100MB</li>
+            <li><strong>Directory Tree</strong>: Navigasi directory structure</li>
+            <li><strong>File Size</strong>: Human readable format</li>
+            <li><strong>SMART Status</strong>: Disk health monitoring</li>
+        </ul>
+
+        <h3>10. Services Monitoring</h3>
+        <ul>
+            <li><strong>Windows Support</strong>: W3SVC, MSSQLSERVER, MySQL, PostgreSQL, Redis, Docker</li>
+            <li><strong>Linux Support</strong>: nginx, apache2, mysql, mariadb, postgresql, redis, ssh, docker</li>
+            <li><strong>Empty State</strong>: Informative message jika tidak ada service</li>
+            <li><strong>Service Summary</strong>: Total dan running count</li>
+        </ul>
+
+        <h2>Teknologi</h2>
+        <ul>
+            <li><strong>Backend</strong>: Python 3.8+ dengan Flask</li>
+            <li><strong>System Library</strong>: psutil (cross-platform)</li>
+            <li><strong>Frontend</strong>: HTML5 + CSS3 + Vanilla JavaScript</li>
+            <li><strong>Charts</strong>: Chart.js 4.4.0</li>
+            <li><strong>UI Design</strong>: Dark Blue Glass Morphism</li>
+            <li><strong>Icons</strong>: Font Awesome 6.5.1</li>
+        </ul>
+
+        <h2>Performance</h2>
+        <ul>
+            <li><strong>Auto-Refresh</strong>: 3 seconds (anti-panas)</li>
+            <li><strong>Tab Visibility Detection</strong>: Pause saat tab hidden</li>
+            <li><strong>Cache TTL</strong>: 0.5 second untuk ultra real-time</li>
+            <li><strong>Lazy Loading</strong>: Per page loading</li>
+            <li><strong>Chart Optimization</strong>: Update mode 'none'</li>
+        </ul>
+
+        <h2>Dokumentasi Lainnya</h2>
+        <p>Untuk informasi lebih detail, silakan lihat dokumentasi berikut:</p>
+        <ul>
+            <li><a href="mntr26.02.19-14.06.html">Quick Start Guide</a> - Panduan cepat memulai</li>
+            <li><a href="mntr26.02.19-14.07.html">Features Overview</a> - Detail semua fitur</li>
+            <li><a href="mntr26.02.19-14.08.html">Installation Guide</a> - Panduan instalasi lengkap</li>
+            <li><a href="mntr26.02.19-14.09.html">Configuration</a> - Konfigurasi aplikasi</li>
+            <li><a href="mntr26.02.19-14.10.html">API Reference</a> - Dokumentasi API endpoints</li>
+            <li><a href="mntr26.02.19-14.14.html">Packaging Guide</a> - Cara membuat .deb/.tar.xz/.exe</li>
+        </ul>
+
+        <div class="footer">
+            <p>Made with ❤️ by M. Nafiurohman</p>
+        </div>
+    </div>
+</body>
+</html>

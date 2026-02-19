@@ -1,20 +1,3 @@
-// Page loading
-window.currentPage = 'overview';
-
-function loadPage(page) {
-    window.currentPage = page;
-    
-    // Hide all pages
-    document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-    
-    // Show selected page
-    const pageElement = document.getElementById(`${page}-page`);
-    if (pageElement) {
-        pageElement.classList.add('active');
-        loadPageData(page);
-    }
-}
-
 // Navigation
 document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', (e) => {
@@ -293,92 +276,31 @@ async function loadAllData() {
 
 // Update Overview
 function updateOverview(data) {
-    // System info horizontal
-    const sysInfoDiv = document.getElementById('system-info-horizontal');
-    if (data.system && sysInfoDiv) {
-        sysInfoDiv.innerHTML = `
-            <div class="system-info-item">
-                <div class="system-info-icon"><i class="fas fa-server"></i></div>
-                <div class="system-info-label">Hostname</div>
-                <div class="system-info-value">${data.system.hostname || '-'}</div>
+    // System info
+    const sysCard = document.querySelector('#overview-page .grid-4 .card:nth-child(1) .card-body');
+    if (data.system && sysCard) {
+        sysCard.innerHTML = `
+            <div class="info-row">
+                <span class="label">Hostname</span>
+                <span class="value">${data.system.hostname || '-'}</span>
             </div>
-            <div class="system-info-item">
-                <div class="system-info-icon"><i class="fas fa-desktop"></i></div>
-                <div class="system-info-label">OS</div>
-                <div class="system-info-value">${data.system.os || '-'}</div>
+            <div class="info-row">
+                <span class="label">OS</span>
+                <span class="value">${data.system.os || '-'}</span>
             </div>
-            <div class="system-info-item">
-                <div class="system-info-icon"><i class="fas fa-microchip"></i></div>
-                <div class="system-info-label">Architecture</div>
-                <div class="system-info-value">${data.system.architecture || '-'}</div>
+            <div class="info-row">
+                <span class="label">Kernel</span>
+                <span class="value">${data.system.kernel || '-'}</span>
             </div>
-            <div class="system-info-item">
-                <div class="system-info-icon"><i class="fas fa-clock"></i></div>
-                <div class="system-info-label">Uptime</div>
-                <div class="system-info-value">${data.system.uptime || '-'}</div>
-            </div>
-            <div class="system-info-item">
-                <div class="system-info-icon"><i class="fas fa-calendar"></i></div>
-                <div class="system-info-label">Boot Time</div>
-                <div class="system-info-value">${data.system.boot_time ? data.system.boot_time.split(' ')[1] : '-'}</div>
+            <div class="info-row">
+                <span class="label">Uptime</span>
+                <span class="value">${data.system.uptime || '-'}</span>
             </div>
         `;
     }
     
-    // GPU Cards
-    if (data.gpu && data.gpu.available && data.gpu.gpus && data.gpu.gpus.length > 0) {
-        const gpuContainer = document.getElementById('gpu-cards-container');
-        const gpuCardsDiv = document.getElementById('gpu-cards');
-        
-        gpuContainer.style.display = 'block';
-        gpuCardsDiv.innerHTML = '';
-        
-        data.gpu.gpus.forEach((gpu, index) => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            
-            const tempColor = gpu.temperature > 80 ? 'var(--danger)' : gpu.temperature > 60 ? 'var(--warning)' : 'var(--success)';
-            const utilColor = gpu.utilization > 80 ? 'var(--danger)' : gpu.utilization > 60 ? 'var(--warning)' : 'var(--success)';
-            
-            card.innerHTML = `
-                <div class="card-header">
-                    <i class="fas fa-display"></i>
-                    <h3>GPU ${index}: ${gpu.name}</h3>
-                </div>
-                <div class="card-body compact">
-                    <div class="grid-2" style="gap: 10px; margin-bottom: 15px;">
-                        <div style="text-align: center;">
-                            <div class="metric-label">Utilization</div>
-                            <div class="metric-value" style="font-size: 24px; color: ${utilColor};">${gpu.utilization.toFixed(1)}%</div>
-                        </div>
-                        <div style="text-align: center;">
-                            <div class="metric-label">Temperature</div>
-                            <div class="metric-value" style="font-size: 24px; color: ${tempColor};">${gpu.temperature.toFixed(1)}°C</div>
-                        </div>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">Vendor</span>
-                        <span class="value">${gpu.vendor}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">Memory Used</span>
-                        <span class="value">${gpu.memory_used} MB / ${gpu.memory_total} MB</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">Memory Utilization</span>
-                        <span class="value">${gpu.memory_utilization.toFixed(1)}%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${gpu.memory_utilization}%"></div>
-                    </div>
-                </div>
-            `;
-            gpuCardsDiv.appendChild(card);
-        });
-    }
-    
     // CPU
-    const cpuCard = document.querySelector('#overview-page .grid-4 .card:nth-child(1) .card-body');
+    const cpuCard = document.querySelector('#overview-page .grid-4 .card:nth-child(2) .card-body');
     if (data.cpu && cpuCard) {
         const cpuUsage = data.cpu.usage_total || 0;
         let color = '#2e5a8f';
@@ -393,14 +315,6 @@ function updateOverview(data) {
                 <div class="progress-fill" style="width: ${cpuUsage}%; background: linear-gradient(90deg, ${color}, ${color}dd)"></div>
             </div>
             <div class="info-row">
-                <span class="label">Model</span>
-                <span class="value" style="font-size: 11px;">${data.cpu.model || '-'}</span>
-            </div>
-            <div class="info-row">
-                <span class="label">Threads</span>
-                <span class="value">${data.cpu.threads || '-'}</span>
-            </div>
-            <div class="info-row">
                 <span class="label">Load</span>
                 <span class="value">${data.cpu.load_average ? data.cpu.load_average['1min'].toFixed(2) : '-'}</span>
             </div>
@@ -412,7 +326,7 @@ function updateOverview(data) {
     }
     
     // Memory
-    const memCard = document.querySelector('#overview-page .grid-4 .card:nth-child(2) .card-body');
+    const memCard = document.querySelector('#overview-page .grid-4 .card:nth-child(3) .card-body');
     if (data.memory && data.memory.ram && memCard) {
         const memPercent = data.memory.ram.percent || 0;
         let color = '#2e5a8f';
@@ -431,18 +345,14 @@ function updateOverview(data) {
                 <span class="value">${formatBytes(data.memory.ram.used)}</span>
             </div>
             <div class="info-row">
-                <span class="label">Available</span>
-                <span class="value">${formatBytes(data.memory.ram.available)}</span>
-            </div>
-            <div class="info-row">
-                <span class="label">Cached</span>
-                <span class="value">${formatBytes(data.memory.ram.cached)}</span>
+                <span class="label">Free</span>
+                <span class="value">${formatBytes(data.memory.ram.free)}</span>
             </div>
         `;
     }
     
     // Disk
-    const diskCard = document.querySelector('#overview-page .grid-4 .card:nth-child(3) .card-body');
+    const diskCard = document.querySelector('#overview-page .grid-4 .card:nth-child(4) .card-body');
     if (data.disk && data.disk.partitions && data.disk.partitions.length > 0 && diskCard) {
         const rootPart = data.disk.partitions.find(p => p.mountpoint === '/') || data.disk.partitions[0];
         const diskPercent = rootPart.percent || 0;
@@ -464,37 +374,6 @@ function updateOverview(data) {
             <div class="info-row">
                 <span class="label">Free</span>
                 <span class="value">${formatBytes(rootPart.free)}</span>
-            </div>
-        `;
-    }
-    
-    // Network
-    const netCard = document.querySelector('#overview-page .grid-4 .card:nth-child(4) .card-body');
-    if (data.network && data.network.interfaces && netCard) {
-        let totalSent = 0, totalRecv = 0;
-        data.network.interfaces.forEach(iface => {
-            if (iface.name !== 'lo') {
-                totalSent += iface.bytes_sent || 0;
-                totalRecv += iface.bytes_recv || 0;
-            }
-        });
-        
-        netCard.innerHTML = `
-            <div class="info-row">
-                <span class="label">Sent</span>
-                <span class="value">${formatBytes(totalSent)}</span>
-            </div>
-            <div class="info-row">
-                <span class="label">Received</span>
-                <span class="value">${formatBytes(totalRecv)}</span>
-            </div>
-            <div class="info-row">
-                <span class="label">Connections</span>
-                <span class="value">${data.network.connections ? data.network.connections.established : 0}</span>
-            </div>
-            <div class="info-row">
-                <span class="label">Public IP</span>
-                <span class="value" style="font-size: 11px;">${data.network.public_ip || 'N/A'}</span>
             </div>
         `;
     }
@@ -653,109 +532,47 @@ function updateServerStatus(data) {
 
 // Update Hardware
 function updateHardware(data) {
-    // CPU Details - Grid 3
+    // CPU Details
     if (data.cpu) {
         const cpuDiv = document.getElementById('hardware-cpu');
         cpuDiv.innerHTML = `
-            <div>
-                <div class="metric-label">Model</div>
-                <div class="metric-value" style="font-size: 14px;">${data.cpu.model || '-'}</div>
+            <div class="info-row">
+                <span class="label">Model</span>
+                <span class="value">${data.cpu.model || '-'}</span>
             </div>
-            <div>
-                <div class="metric-label">Cores</div>
-                <div class="metric-value" style="font-size: 20px;">${data.cpu.cores || '-'}</div>
+            <div class="info-row">
+                <span class="label">Cores</span>
+                <span class="value">${data.cpu.cores || '-'}</span>
             </div>
-            <div>
-                <div class="metric-label">Threads</div>
-                <div class="metric-value" style="font-size: 20px;">${data.cpu.threads || '-'}</div>
+            <div class="info-row">
+                <span class="label">Threads</span>
+                <span class="value">${data.cpu.threads || '-'}</span>
             </div>
-            <div>
-                <div class="metric-label">Frequency</div>
-                <div class="metric-value" style="font-size: 16px;">${data.cpu.frequency ? data.cpu.frequency.current.toFixed(0) + ' MHz' : '-'}</div>
+            <div class="info-row">
+                <span class="label">Frequency</span>
+                <span class="value">${data.cpu.frequency ? data.cpu.frequency.current.toFixed(2) + ' MHz' : '-'}</span>
             </div>
-            <div>
-                <div class="metric-label">Cache Size</div>
-                <div class="metric-value" style="font-size: 16px;">${data.cpu.cache_size || '-'}</div>
+            <div class="info-row">
+                <span class="label">Cache Size</span>
+                <span class="value">${data.cpu.cache_size || '-'}</span>
             </div>
-            <div>
-                <div class="metric-label">Temperature</div>
-                <div class="metric-value" style="font-size: 16px; color: ${data.cpu.temperature > 80 ? 'var(--danger)' : data.cpu.temperature > 60 ? 'var(--warning)' : 'var(--success)'}">${data.cpu.temperature ? data.cpu.temperature.toFixed(1) + '°C' : 'N/A'}</div>
+            <div class="info-row">
+                <span class="label">Temperature</span>
+                <span class="value">${data.cpu.temperature ? data.cpu.temperature.toFixed(1) + '°C' : 'N/A'}</span>
             </div>
-            <div>
-                <div class="metric-label">Load 1m</div>
-                <div class="metric-value" style="font-size: 16px;">${data.cpu.load_average ? data.cpu.load_average['1min'].toFixed(2) : '-'}</div>
+            <div class="info-row">
+                <span class="label">Load Average (1m)</span>
+                <span class="value">${data.cpu.load_average ? data.cpu.load_average['1min'].toFixed(2) : '-'}</span>
             </div>
-            <div>
-                <div class="metric-label">Load 5m</div>
-                <div class="metric-value" style="font-size: 16px;">${data.cpu.load_average ? data.cpu.load_average['5min'].toFixed(2) : '-'}</div>
+            <div class="info-row">
+                <span class="label">Load Average (5m)</span>
+                <span class="value">${data.cpu.load_average ? data.cpu.load_average['5min'].toFixed(2) : '-'}</span>
             </div>
-            <div>
-                <div class="metric-label">Load 15m</div>
-                <div class="metric-value" style="font-size: 16px;">${data.cpu.load_average ? data.cpu.load_average['15min'].toFixed(2) : '-'}</div>
+            <div class="info-row">
+                <span class="label">Load Average (15m)</span>
+                <span class="value">${data.cpu.load_average ? data.cpu.load_average['15min'].toFixed(2) : '-'}</span>
             </div>
         `;
-    }
-    
-    // GPU Cards in Hardware
-    if (data.gpu && data.gpu.available && data.gpu.gpus && data.gpu.gpus.length > 0) {
-        const gpuContainer = document.getElementById('hardware-gpu-container');
-        const gpuCardsDiv = document.getElementById('hardware-gpu-cards');
-        const gpuChartCard = document.getElementById('hardware-gpu-chart-card');
-        
-        gpuContainer.style.display = 'block';
-        gpuChartCard.style.display = 'block';
-        gpuCardsDiv.innerHTML = '';
-        
-        data.gpu.gpus.forEach((gpu, index) => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            
-            const tempColor = gpu.temperature > 80 ? 'var(--danger)' : gpu.temperature > 60 ? 'var(--warning)' : 'var(--success)';
-            const utilColor = gpu.utilization > 80 ? 'var(--danger)' : gpu.utilization > 60 ? 'var(--warning)' : 'var(--success)';
-            const memColor = gpu.memory_utilization > 80 ? 'var(--danger)' : gpu.memory_utilization > 60 ? 'var(--warning)' : 'var(--success)';
-            
-            card.innerHTML = `
-                <div class="card-header">
-                    <i class="fas fa-display"></i>
-                    <h3>GPU ${index}: ${gpu.name}</h3>
-                </div>
-                <div class="card-body">
-                    <div class="grid-3" style="gap: 15px; margin-bottom: 15px;">
-                        <div style="text-align: center; padding: 15px; background: rgba(46, 90, 143, 0.1); border-radius: 8px;">
-                            <div class="metric-label">Utilization</div>
-                            <div class="metric-value" style="font-size: 28px; color: ${utilColor};">${gpu.utilization.toFixed(1)}%</div>
-                        </div>
-                        <div style="text-align: center; padding: 15px; background: rgba(46, 90, 143, 0.1); border-radius: 8px;">
-                            <div class="metric-label">Temperature</div>
-                            <div class="metric-value" style="font-size: 28px; color: ${tempColor};">${gpu.temperature.toFixed(1)}°C</div>
-                        </div>
-                        <div style="text-align: center; padding: 15px; background: rgba(46, 90, 143, 0.1); border-radius: 8px;">
-                            <div class="metric-label">Memory</div>
-                            <div class="metric-value" style="font-size: 28px; color: ${memColor};">${gpu.memory_utilization.toFixed(1)}%</div>
-                        </div>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">Vendor</span>
-                        <span class="value">${gpu.vendor}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">Memory Used</span>
-                        <span class="value">${gpu.memory_used} MB / ${gpu.memory_total} MB</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">Memory Free</span>
-                        <span class="value">${gpu.memory_free} MB</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${gpu.memory_utilization}%; background: linear-gradient(90deg, ${memColor}, ${memColor}dd)"></div>
-                    </div>
-                </div>
-            `;
-            gpuCardsDiv.appendChild(card);
-        });
-        
-        // Update GPU chart in hardware
-        updateGPUChartHardware(data.gpu);
     }
     
     // Memory Details
@@ -958,57 +775,23 @@ function updateNetwork(data) {
 
 // Update Services
 function updateServices(data) {
-    if (!data.services) return;
+    if (!data.services || !data.services.services) return;
     
     const servicesDiv = document.getElementById('services-list');
     servicesDiv.innerHTML = '';
-    
-    if (!data.services.services || data.services.services.length === 0) {
-        servicesDiv.innerHTML = `
-            <div class="alert-item info">
-                <i class="fas fa-info-circle"></i> 
-                Tidak ada service yang terdeteksi. Ini bisa terjadi karena:
-                <ul style="margin-top: 10px; margin-left: 20px;">
-                    <li>Service belum diinstall</li>
-                    <li>Service tidak berjalan</li>
-                    <li>Membutuhkan permission administrator/root</li>
-                    <li>Platform tidak mendukung (Windows/Linux)</li>
-                </ul>
-            </div>
-        `;
-        return;
-    }
     
     data.services.services.forEach(svc => {
         const item = document.createElement('div');
         item.className = 'service-item';
         item.innerHTML = `
-            <div class="service-name">
-                <i class="fas fa-cog"></i> ${svc.name}
-            </div>
+            <div class="service-name">${svc.name}</div>
             <div class="service-status">
                 <span class="status-badge ${svc.status === 'active' ? 'status-active' : 'status-inactive'}">${svc.status}</span>
                 <span class="status-badge ${svc.enabled === 'enabled' ? 'status-active' : 'status-inactive'}">${svc.enabled}</span>
-                ${svc.pid && svc.pid !== 'N/A' ? `<span style="font-size: 11px; color: var(--text-secondary);">PID: ${svc.pid}</span>` : ''}
             </div>
         `;
         servicesDiv.appendChild(item);
     });
-    
-    // Add summary
-    const summary = document.createElement('div');
-    summary.style.marginTop = '15px';
-    summary.style.padding = '10px';
-    summary.style.background = 'rgba(46, 90, 143, 0.1)';
-    summary.style.borderRadius = '6px';
-    summary.style.fontSize = '12px';
-    summary.style.color = 'var(--text-secondary)';
-    summary.innerHTML = `
-        <i class="fas fa-info-circle"></i> 
-        Total: ${data.services.total || 0} services | 
-        Running: ${data.services.running || 0} services
-    `;
-    servicesDiv.appendChild(summary);
 }
 
 // Update Processes
@@ -1048,293 +831,9 @@ function updateProcesses(data) {
     }
 }
 
-// Process Manager
-let allProcesses = [];
-let sortColumn = 'cpu';
-let sortDirection = 'desc';
-
-async function loadProcessManager() {
-    try {
-        const response = await fetch('/api/process-list');
-        const data = await response.json();
-        
-        allProcesses = data.processes || [];
-        renderProcessTable();
-    } catch (error) {
-        console.error('Error loading processes:', error);
-    }
-}
-
-function renderProcessTable(filter = '') {
-    const tableDiv = document.getElementById('process-manager-table');
-    if (!tableDiv) return;
-    
-    // Filter processes
-    let processes = allProcesses;
-    if (filter) {
-        processes = allProcesses.filter(p => 
-            p.name.toLowerCase().includes(filter.toLowerCase()) ||
-            p.pid.toString().includes(filter) ||
-            (p.user && p.user.toLowerCase().includes(filter.toLowerCase()))
-        );
-    }
-    
-    // Sort processes
-    processes.sort((a, b) => {
-        let aVal = a[sortColumn] || 0;
-        let bVal = b[sortColumn] || 0;
-        
-        if (sortColumn === 'name' || sortColumn === 'user') {
-            aVal = (aVal || '').toString().toLowerCase();
-            bVal = (bVal || '').toString().toLowerCase();
-        }
-        
-        if (sortDirection === 'asc') {
-            return aVal > bVal ? 1 : -1;
-        } else {
-            return aVal < bVal ? 1 : -1;
-        }
-    });
-    
-    // Limit to 100 processes for performance
-    processes = processes.slice(0, 100);
-    
-    // Create table
-    let html = `
-        <table class="process-table">
-            <thead>
-                <tr>
-                    <th onclick="sortProcesses('pid')">PID <i class="fas fa-sort"></i></th>
-                    <th onclick="sortProcesses('name')">Name <i class="fas fa-sort"></i></th>
-                    <th onclick="sortProcesses('user')">User <i class="fas fa-sort"></i></th>
-                    <th onclick="sortProcesses('cpu')">CPU % <i class="fas fa-sort"></i></th>
-                    <th onclick="sortProcesses('memory')">Memory % <i class="fas fa-sort"></i></th>
-                    <th onclick="sortProcesses('memory_mb')">Memory (MB) <i class="fas fa-sort"></i></th>
-                    <th onclick="sortProcesses('threads')">Threads <i class="fas fa-sort"></i></th>
-                    <th onclick="sortProcesses('status')">Status <i class="fas fa-sort"></i></th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-    
-    processes.forEach(proc => {
-        const cpuClass = proc.cpu > 50 ? 'text-danger' : proc.cpu > 25 ? 'text-warning' : '';
-        const memClass = proc.memory > 10 ? 'text-danger' : proc.memory > 5 ? 'text-warning' : '';
-        
-        html += `
-            <tr>
-                <td>${proc.pid}</td>
-                <td class="process-name-cell">${proc.name}</td>
-                <td>${proc.user}</td>
-                <td class="${cpuClass}">${proc.cpu.toFixed(1)}</td>
-                <td class="${memClass}">${proc.memory.toFixed(1)}</td>
-                <td>${proc.memory_mb.toFixed(1)}</td>
-                <td>${proc.threads}</td>
-                <td><span class="status-badge ${proc.status === 'running' ? 'status-active' : 'status-inactive'}">${proc.status}</span></td>
-            </tr>
-        `;
-    });
-    
-    html += `
-            </tbody>
-        </table>
-        <div style="margin-top: 15px; color: var(--text-secondary); font-size: 12px;">
-            Showing ${processes.length} of ${allProcesses.length} processes
-        </div>
-    `;
-    
-    tableDiv.innerHTML = html;
-}
-
-function sortProcesses(column) {
-    if (sortColumn === column) {
-        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-        sortColumn = column;
-        sortDirection = 'desc';
-    }
-    
-    const filter = document.getElementById('process-search')?.value || '';
-    renderProcessTable(filter);
-}
-
-function refreshProcesses() {
-    console.log('🔄 Refreshing processes...');
-    loadProcessManager();
-    
-    // Show feedback
-    const btn = event.target.closest('button');
-    if (btn) {
-        const originalHTML = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
-        btn.disabled = true;
-        
-        setTimeout(() => {
-            btn.innerHTML = originalHTML;
-            btn.disabled = false;
-        }, 1000);
-    }
-}
-
-// Add search listener
-document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('process-search');
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            renderProcessTable(e.target.value);
-        });
-    }
-});
-
 // Update Security
 function updateSecurity(data) {
     if (!data.security) return;
-    
-    // Security Score
-    const scoreContainer = document.getElementById('security-score-container');
-    if (scoreContainer && data.security.security_score !== undefined) {
-        const score = data.security.security_score;
-        let scoreColor = 'var(--success)';
-        let scoreLabel = 'Excellent';
-        
-        if (score < 50) {
-            scoreColor = 'var(--danger)';
-            scoreLabel = 'Critical';
-        } else if (score < 70) {
-            scoreColor = 'var(--warning)';
-            scoreLabel = 'Warning';
-        } else if (score < 90) {
-            scoreColor = 'var(--light-blue)';
-            scoreLabel = 'Good';
-        }
-        
-        scoreContainer.innerHTML = `
-            <div class="security-score-value" style="color: ${scoreColor};">${score}</div>
-            <div class="security-score-label">Security Score - ${scoreLabel}</div>
-            <div style="margin-top: 15px; font-size: 12px; color: var(--text-secondary);">
-                Based on firewall, antivirus, open ports, and failed login attempts
-            </div>
-        `;
-    }
-    
-    // Firewall
-    const firewallDiv = document.getElementById('security-firewall');
-    if (firewallDiv && data.security.firewall) {
-        const fw = data.security.firewall;
-        const statusColor = fw.enabled ? 'var(--success)' : 'var(--danger)';
-        const statusIcon = fw.enabled ? 'fa-check-circle' : 'fa-times-circle';
-        
-        firewallDiv.innerHTML = `
-            <div style="text-align: center; margin-bottom: 20px;">
-                <i class="fas ${statusIcon}" style="font-size: 48px; color: ${statusColor};"></i>
-                <div style="margin-top: 10px; font-size: 18px; font-weight: 600;">${fw.status}</div>
-            </div>
-            <div class="info-row">
-                <span class="label">Type</span>
-                <span class="value">${fw.type}</span>
-            </div>
-            <div class="info-row">
-                <span class="label">Enabled</span>
-                <span class="value">
-                    <span class="status-badge ${fw.enabled ? 'status-active' : 'status-inactive'}">
-                        ${fw.enabled ? 'Yes' : 'No'}
-                    </span>
-                </span>
-            </div>
-            ${fw.rules_count ? `
-            <div class="info-row">
-                <span class="label">Rules Count</span>
-                <span class="value">${fw.rules_count}</span>
-            </div>
-            ` : ''}
-        `;
-    }
-    
-    // Antivirus
-    const antivirusDiv = document.getElementById('security-antivirus');
-    if (antivirusDiv && data.security.antivirus) {
-        const av = data.security.antivirus;
-        const statusColor = av.enabled ? 'var(--success)' : 'var(--danger)';
-        const statusIcon = av.enabled ? 'fa-check-circle' : 'fa-times-circle';
-        
-        antivirusDiv.innerHTML = `
-            <div style="text-align: center; margin-bottom: 20px;">
-                <i class="fas ${statusIcon}" style="font-size: 48px; color: ${statusColor};"></i>
-                <div style="margin-top: 10px; font-size: 18px; font-weight: 600;">${av.status}</div>
-            </div>
-            <div class="info-row">
-                <span class="label">Name</span>
-                <span class="value">${av.name}</span>
-            </div>
-            <div class="info-row">
-                <span class="label">Enabled</span>
-                <span class="value">
-                    <span class="status-badge ${av.enabled ? 'status-active' : 'status-inactive'}">
-                        ${av.enabled ? 'Yes' : 'No'}
-                    </span>
-                </span>
-            </div>
-        `;
-    }
-    
-    // Open Ports
-    const portsDiv = document.getElementById('security-ports');
-    if (portsDiv && data.security.open_ports) {
-        portsDiv.innerHTML = '';
-        
-        if (data.security.open_ports.length === 0) {
-            portsDiv.innerHTML = '<div class="loading">No open ports detected</div>';
-        } else {
-            // Group by risk
-            const highRisk = data.security.open_ports.filter(p => p.risk === 'High');
-            const mediumRisk = data.security.open_ports.filter(p => p.risk === 'Medium');
-            const lowRisk = data.security.open_ports.filter(p => p.risk === 'Low');
-            
-            let html = `
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
-                    <div style="text-align: center; padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
-                        <div style="font-size: 24px; font-weight: 700; color: var(--danger);">${highRisk.length}</div>
-                        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 5px;">HIGH RISK</div>
-                    </div>
-                    <div style="text-align: center; padding: 15px; background: rgba(245, 158, 11, 0.1); border-radius: 8px;">
-                        <div style="font-size: 24px; font-weight: 700; color: var(--warning);">${mediumRisk.length}</div>
-                        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 5px;">MEDIUM RISK</div>
-                    </div>
-                    <div style="text-align: center; padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
-                        <div style="font-size: 24px; font-weight: 700; color: var(--success);">${lowRisk.length}</div>
-                        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 5px;">LOW RISK</div>
-                    </div>
-                </div>
-                <table class="process-table">
-                    <thead>
-                        <tr>
-                            <th>Port</th>
-                            <th>Protocol</th>
-                            <th>Service</th>
-                            <th>Process</th>
-                            <th>Risk</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            data.security.open_ports.forEach(port => {
-                const riskClass = port.risk === 'High' ? 'text-danger' : port.risk === 'Medium' ? 'text-warning' : '';
-                html += `
-                    <tr>
-                        <td><strong>${port.port}</strong></td>
-                        <td><span class="status-badge status-active">${port.protocol}</span></td>
-                        <td>${port.service}</td>
-                        <td>${port.process || 'Unknown'}</td>
-                        <td><span class="status-badge ${port.risk === 'High' ? 'status-inactive' : port.risk === 'Medium' ? 'status-warning' : 'status-active'}">${port.risk}</span></td>
-                    </tr>
-                `;
-            });
-            
-            html += '</tbody></table>';
-            portsDiv.innerHTML = html;
-        }
-    }
     
     // Logged users
     const usersDiv = document.getElementById('security-users');
@@ -1345,7 +844,7 @@ function updateSecurity(data) {
             const item = document.createElement('div');
             item.innerHTML = `
                 <div class="info-row">
-                    <span class="label"><i class="fas fa-user"></i> ${user.name}@${user.terminal}</span>
+                    <span class="label">${user.name}@${user.terminal}</span>
                     <span class="value">${user.started}</span>
                 </div>
             `;
@@ -1372,27 +871,7 @@ function updateSecurity(data) {
         });
         failedDiv.appendChild(logContainer);
     } else {
-        failedDiv.innerHTML = '<div class="alert-item success"><i class="fas fa-check-circle"></i> No failed login attempts detected</div>';
-    }
-    
-    // Suspicious Processes
-    const suspiciousDiv = document.getElementById('security-suspicious');
-    if (suspiciousDiv && data.security.suspicious_processes) {
-        suspiciousDiv.innerHTML = '';
-        
-        if (data.security.suspicious_processes.length === 0) {
-            suspiciousDiv.innerHTML = '<div class="alert-item success"><i class="fas fa-check-circle"></i> No suspicious processes detected</div>';
-        } else {
-            data.security.suspicious_processes.forEach(proc => {
-                const item = document.createElement('div');
-                item.className = 'alert-item warning';
-                item.innerHTML = `
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <strong>${proc.name}</strong> (PID: ${proc.pid}) - User: ${proc.user}
-                `;
-                suspiciousDiv.appendChild(item);
-            });
-        }
+        failedDiv.innerHTML = '<div class="loading">No failed login attempts</div>';
     }
 }
 
@@ -1519,21 +998,18 @@ async function loadPageData(page) {
                 break;
             case 'hardware':
                 updateHardware(data);
+                updateCPUCoreChart();
                 updateGPUChart();
-                loadPerformanceMetrics();
-                loadThermalStatus();
                 break;
             case 'network':
                 updateNetwork(data);
                 loadNetworkTraffic();
-                loadNetworkStatus();
                 break;
             case 'services':
                 updateServices(data);
                 break;
             case 'processes':
                 updateProcesses(data);
-                loadProcessManager();
                 break;
             case 'security':
                 updateSecurity(data);
@@ -1603,16 +1079,6 @@ async function loadLogs() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Initializing dashboard...');
     
-    // Load version
-    fetch('/api/version')
-        .then(res => res.json())
-        .then(data => {
-            document.getElementById('app-version').textContent = data.version;
-        })
-        .catch(() => {
-            document.getElementById('app-version').textContent = 'v=mntr26.02.19/13.28';
-        });
-    
     // Protect author info
     protectAuthorInfo();
     
@@ -1627,7 +1093,6 @@ document.addEventListener('DOMContentLoaded', () => {
             initCharts();
             initCPUCoreChart();
             initGPUChart();
-            initGPUChartHardware();
         }, 300);
     } else {
         console.error('❌ loadPage function not found!');
@@ -2083,10 +1548,10 @@ async function updateCPUCoreChart() {
         const response = await fetch('/api/cpu');
         const data = await response.json();
         
-        if (!cpuCoreChart || !data.usage_per_core) return;
+        if (!cpuCoreChart || !data.per_core_usage) return;
         
-        const labels = data.usage_per_core.map((_, i) => `T${i}`);
-        const usage = data.usage_per_core;
+        const labels = data.per_core_usage.map((_, i) => `C${i}`);
+        const usage = data.per_core_usage;
         
         cpuCoreChart.data.labels = labels;
         cpuCoreChart.data.datasets[0].data = usage;
@@ -2094,207 +1559,4 @@ async function updateCPUCoreChart() {
     } catch (error) {
         console.error('Error updating CPU core chart:', error);
     }
-}
-
-// Performance Metrics
-async function loadPerformanceMetrics() {
-    try {
-        const response = await fetch('/api/performance');
-        const data = await response.json();
-        
-        const perfDiv = document.getElementById('hardware-performance');
-        if (!perfDiv) return;
-        
-        perfDiv.innerHTML = `
-            <div style="text-align: center; padding: 15px; background: rgba(46, 90, 143, 0.1); border-radius: 8px;">
-                <div class="metric-label">Context Switches</div>
-                <div class="metric-value" style="font-size: 20px;">${data.ctx_switches || 0}</div>
-            </div>
-            <div style="text-align: center; padding: 15px; background: rgba(46, 90, 143, 0.1); border-radius: 8px;">
-                <div class="metric-label">Interrupts</div>
-                <div class="metric-value" style="font-size: 20px;">${data.interrupts || 0}</div>
-            </div>
-            <div style="text-align: center; padding: 15px; background: rgba(46, 90, 143, 0.1); border-radius: 8px;">
-                <div class="metric-label">Total Threads</div>
-                <div class="metric-value" style="font-size: 20px;">${data.total_threads || 0}</div>
-            </div>
-            <div style="text-align: center; padding: 15px; background: rgba(46, 90, 143, 0.1); border-radius: 8px;">
-                <div class="metric-label">Zombie Processes</div>
-                <div class="metric-value" style="font-size: 20px; color: ${data.zombie_processes > 0 ? 'var(--danger)' : 'var(--success)'}">${data.zombie_processes || 0}</div>
-            </div>
-        `;
-    } catch (error) {
-        console.error('Error loading performance metrics:', error);
-    }
-}
-
-// Thermal Status
-async function loadThermalStatus() {
-    try {
-        const response = await fetch('/api/thermal');
-        const data = await response.json();
-        
-        const thermalDiv = document.getElementById('hardware-thermal');
-        if (!thermalDiv) return;
-        
-        let html = '';
-        
-        // CPU Temperature
-        if (data.cpu_temp) {
-            const temp = data.cpu_temp;
-            const tempColor = temp.current > 80 ? 'var(--danger)' : temp.current > 60 ? 'var(--warning)' : 'var(--success)';
-            html += `
-                <div style="text-align: center; padding: 15px; background: rgba(46, 90, 143, 0.1); border-radius: 8px;">
-                    <div class="metric-label">CPU Temperature</div>
-                    <div class="metric-value" style="font-size: 24px; color: ${tempColor};">${temp.current}°C</div>
-                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: 5px;">${temp.status}</div>
-                </div>
-            `;
-        }
-        
-        // Battery
-        if (data.battery) {
-            const bat = data.battery;
-            const batColor = bat.percent < 20 ? 'var(--danger)' : bat.percent < 50 ? 'var(--warning)' : 'var(--success)';
-            html += `
-                <div style="text-align: center; padding: 15px; background: rgba(46, 90, 143, 0.1); border-radius: 8px;">
-                    <div class="metric-label">Battery</div>
-                    <div class="metric-value" style="font-size: 24px; color: ${batColor};">${bat.percent}%</div>
-                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: 5px;">
-                        <i class="fas fa-${bat.plugged ? 'plug' : 'battery-half'}"></i> ${bat.plugged ? 'Plugged' : 'On Battery'}
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Throttle Count
-        if (data.throttle_count !== undefined) {
-            html += `
-                <div style="text-align: center; padding: 15px; background: rgba(46, 90, 143, 0.1); border-radius: 8px;">
-                    <div class="metric-label">Thermal Throttle</div>
-                    <div class="metric-value" style="font-size: 24px; color: ${data.throttle_count > 0 ? 'var(--warning)' : 'var(--success)'}">${data.throttle_count}</div>
-                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: 5px;">Events</div>
-                </div>
-            `;
-        }
-        
-        if (html) {
-            thermalDiv.innerHTML = html;
-        } else {
-            thermalDiv.innerHTML = '<div class="loading">No thermal data available</div>';
-        }
-    } catch (error) {
-        console.error('Error loading thermal status:', error);
-    }
-}
-
-// Network Status
-async function loadNetworkStatus() {
-    try {
-        // Monitor Status
-        document.getElementById('net-monitor-status').className = 'status-icon text-success';
-        document.getElementById('net-monitor-text').textContent = 'Active';
-        
-        // Internet Check
-        const internetResponse = await fetch('/api/internet');
-        const internetData = await internetResponse.json();
-        
-        if (internetData.connected) {
-            document.getElementById('net-internet-status').className = 'status-icon text-success';
-            document.getElementById('net-internet-text').textContent = 'Connected';
-        } else {
-            document.getElementById('net-internet-status').className = 'status-icon text-danger';
-            document.getElementById('net-internet-text').textContent = 'Disconnected';
-        }
-        
-        // Device Status (check if any interface is UP)
-        const networkResponse = await fetch('/api/network');
-        const networkData = await networkResponse.json();
-        
-        if (networkData.interfaces) {
-            const activeInterfaces = networkData.interfaces.filter(i => i.status === 'UP' && i.name !== 'lo');
-            if (activeInterfaces.length > 0) {
-                document.getElementById('net-device-status').className = 'status-icon text-success';
-                document.getElementById('net-device-text').textContent = `${activeInterfaces.length} Online`;
-            } else {
-                document.getElementById('net-device-status').className = 'status-icon text-danger';
-                document.getElementById('net-device-text').textContent = 'Offline';
-            }
-        }
-        
-        // Connections
-        if (networkData.connections) {
-            document.getElementById('net-connections-count').textContent = networkData.connections.established || 0;
-        }
-    } catch (error) {
-        console.error('Error loading network status:', error);
-    }
-}
-
-// GPU Chart for Hardware Page
-let gpuChartHardware;
-
-function initGPUChartHardware() {
-    const gpuCtx = document.getElementById('gpuChartHardware');
-    if (!gpuCtx) return;
-    
-    gpuChartHardware = new Chart(gpuCtx, {
-        type: 'bar',
-        data: {
-            labels: [],
-            datasets: [
-                {
-                    label: 'Utilization %',
-                    data: [],
-                    backgroundColor: 'rgba(139, 92, 246, 0.6)',
-                    borderColor: '#8b5cf6',
-                    borderWidth: 1
-                },
-                {
-                    label: 'Temperature °C',
-                    data: [],
-                    backgroundColor: 'rgba(239, 68, 68, 0.6)',
-                    borderColor: '#ef4444',
-                    borderWidth: 1
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: { display: true, labels: { color: '#a8c5e8' } },
-                tooltip: {
-                    backgroundColor: 'rgba(15, 31, 58, 0.9)',
-                    titleColor: '#e8f0ff',
-                    bodyColor: '#a8c5e8'
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    grid: { color: 'rgba(46, 90, 143, 0.2)' },
-                    ticks: { color: '#a8c5e8' }
-                },
-                x: {
-                    grid: { color: 'rgba(46, 90, 143, 0.2)' },
-                    ticks: { color: '#a8c5e8' }
-                }
-            }
-        }
-    });
-}
-
-function updateGPUChartHardware(gpuData) {
-    if (!gpuChartHardware || !gpuData.gpus || gpuData.gpus.length === 0) return;
-    
-    const labels = gpuData.gpus.map((gpu, i) => `GPU ${i}`);
-    const utilization = gpuData.gpus.map(gpu => gpu.utilization || 0);
-    const temperature = gpuData.gpus.map(gpu => gpu.temperature || 0);
-    
-    gpuChartHardware.data.labels = labels;
-    gpuChartHardware.data.datasets[0].data = utilization;
-    gpuChartHardware.data.datasets[1].data = temperature;
-    gpuChartHardware.update('none');
 }

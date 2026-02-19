@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Packaging Guide - System Monitor</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a1628 0%, #0f1f3a 100%);
+            color: #e8f0ff;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(15, 31, 58, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(46, 90, 143, 0.3);
+            border-radius: 12px;
+            padding: 40px;
+        }
+        .back-link {
+            display: inline-block;
+            color: #4a8fd8;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { color: #4a8fd8; margin-bottom: 10px; }
+        h2 { color: #4a8fd8; margin-top: 30px; margin-bottom: 15px; }
+        h3 { color: #6aa8e8; margin-top: 20px; margin-bottom: 10px; }
+        p { margin-bottom: 15px; color: #a8c5e8; }
+        code {
+            background: rgba(10, 22, 40, 0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e8f0ff;
+        }
+        pre {
+            background: rgba(10, 22, 40, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        pre code { background: none; padding: 0; }
+        ul { margin-left: 30px; margin-bottom: 15px; color: #a8c5e8; }
+        li { margin-bottom: 8px; }
+        .version {
+            display: inline-block;
+            background: rgba(46, 90, 143, 0.3);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+        .package-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .package-card {
+            background: rgba(46, 90, 143, 0.2);
+            border: 1px solid rgba(46, 90, 143, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .package-card h3 { margin-top: 0; }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #a8c5e8;
+            font-size: 12px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(46, 90, 143, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Documentation</a>
+        <h1>📦 Packaging Guide</h1>
+        <div class="version">mntr26.02.19-14.05</div>
+        
+        <p>System Monitor dapat di-package menjadi aplikasi standalone dalam format <strong>.deb</strong>, <strong>.tar.xz</strong>, dan <strong>.exe</strong></p>
+
+        <h2>🚀 Quick Start</h2>
+        <pre><code># Install packaging tools (Linux)
+sudo apt install dpkg-dev tar xz-utils
+
+# Install PyInstaller (for .exe)
+pip3 install pyinstaller
+
+# Create package
+python3 package.py [deb|tar|exe|all]</code></pre>
+
+        <h2>📦 Package Types</h2>
+
+        <div class="package-grid">
+            <div class="package-card">
+                <h3>.deb Package</h3>
+                <p><strong>For:</strong> Debian/Ubuntu</p>
+                <p><strong>Create:</strong></p>
+                <pre><code>python3 package.py deb</code></pre>
+                <p><strong>Install:</strong></p>
+                <pre><code>sudo dpkg -i system-monitor_26.02.19-14.05.deb
+monitor</code></pre>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Auto-installs dependencies</li>
+                    <li>Global command <code>monitor</code></li>
+                    <li>System integration</li>
+                    <li>Easy uninstall</li>
+                </ul>
+            </div>
+
+            <div class="package-card">
+                <h3>.tar.xz Package</h3>
+                <p><strong>For:</strong> Linux Universal</p>
+                <p><strong>Create:</strong></p>
+                <pre><code>python3 package.py tar</code></pre>
+                <p><strong>Install:</strong></p>
+                <pre><code>tar -xJf system-monitor-26.02.19-14.05.tar.xz
+cd system-monitor-26.02.19-14.05
+./install.sh
+./monitor</code></pre>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Portable</li>
+                    <li>No root required</li>
+                    <li>Works on any Linux</li>
+                    <li>Small size (~3MB)</li>
+                </ul>
+            </div>
+
+            <div class="package-card">
+                <h3>.exe Package</h3>
+                <p><strong>For:</strong> Windows</p>
+                <p><strong>Create:</strong></p>
+                <pre><code>python3 package.py exe</code></pre>
+                <p><strong>Run:</strong></p>
+                <p>Double-click <code>SystemMonitor-26.02.19-14.05.exe</code></p>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Single executable</li>
+                    <li>No Python required</li>
+                    <li>Standalone</li>
+                    <li>Portable</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>📋 Requirements</h2>
+        <h3>For .deb packaging:</h3>
+        <pre><code>sudo apt install dpkg-dev</code></pre>
+
+        <h3>For .tar.xz packaging:</h3>
+        <pre><code>sudo apt install tar xz-utils</code></pre>
+
+        <h3>For .exe packaging:</h3>
+        <pre><code>pip3 install pyinstaller</code></pre>
+
+        <h2>🎯 Create All Packages</h2>
+        <pre><code>python3 package.py all</code></pre>
+        <p>Creates all three package types at once.</p>
+
+        <h2>📊 Package Sizes</h2>
+        <ul>
+            <li><strong>.deb</strong>: ~5 MB</li>
+            <li><strong>.tar.xz</strong>: ~3 MB (compressed)</li>
+            <li><strong>.exe</strong>: ~50-100 MB (includes Python runtime)</li>
+        </ul>
+
+        <h2>🔧 Package Contents</h2>
+        <p>All packages include:</p>
+        <ul>
+            <li>Main application (app.py)</li>
+            <li>All modules (modules/, utils/)</li>
+            <li>Templates and static files</li>
+            <li>Documentation (docs/)</li>
+            <li>Requirements file</li>
+            <li>Launcher script</li>
+        </ul>
+
+        <h2>🐛 Troubleshooting</h2>
+        <h3>.deb installation fails</h3>
+        <pre><code>sudo apt --fix-broken install</code></pre>
+
+        <h3>.tar.xz missing dependencies</h3>
+        <pre><code>pip3 install -r requirements.txt</code></pre>
+
+        <h3>.exe antivirus warning</h3>
+        <p>Add exception in Windows Defender. The .exe is safe, it's just bundled Python.</p>
+
+        <div class="footer">
+            <p>Made with ❤️ by M. Nafiurohman</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Performance Guide</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a1628 0%, #0f1f3a 100%);
+            color: #e8f0ff;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(15, 31, 58, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(46, 90, 143, 0.3);
+            border-radius: 12px;
+            padding: 40px;
+        }
+        .back-link {
+            display: inline-block;
+            color: #4a8fd8;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { color: #4a8fd8; margin-bottom: 10px; }
+        h2 { color: #4a8fd8; margin-top: 30px; margin-bottom: 15px; }
+        h3 { color: #6aa8e8; margin-top: 20px; margin-bottom: 10px; }
+        h4 { color: #8ab8f0; margin-top: 15px; margin-bottom: 8px; }
+        p { margin-bottom: 15px; color: #a8c5e8; }
+        code {
+            background: rgba(10, 22, 40, 0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e8f0ff;
+        }
+        pre {
+            background: rgba(10, 22, 40, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        pre code { background: none; padding: 0; }
+        ul, ol { margin-left: 30px; margin-bottom: 15px; color: #a8c5e8; }
+        li { margin-bottom: 8px; }
+        .version {
+            display: inline-block;
+            background: rgba(46, 90, 143, 0.3);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #a8c5e8;
+            font-size: 12px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(46, 90, 143, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index-mntr26.02.19-14.05.html" class="back-link">← Back to Documentation</a>
+        <h1>⚡ Performance Guide</h1>
+        <div class="version">mntr26.02.19-14.05</div>
+        <div class="content">
+
+<h2>Optimization Tips</h2>
+<ul>
+<li>Reduce refresh interval (3s → 5s)</li>
+<li>Limit processes (100 → 50)</li>
+<li>Disable unused charts</li>
+<li>Close unused tabs</li>
+<li>Keep cache TTL at 0.5s</li>
+</ul>
+
+<h2>Performance Metrics</h2>
+<ul>
+<li>Context switches</li>
+<li>Interrupts</li>
+<li>File descriptors</li>
+<li>Thread count</li>
+<li>Zombie processes</li>
+</ul>
+
+        </div>
+        <div class="footer">
+            <p>Made with ❤️ by M. Nafiurohman</p>
+        </div>
+    </div>
+</body>
+</html>

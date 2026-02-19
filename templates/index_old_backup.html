@@ -53,10 +53,6 @@
                     <i class="fab fa-docker"></i>
                     <span>Docker</span>
                 </a>
-                <a href="#kubernetes" class="nav-item" data-page="kubernetes">
-                    <i class="fas fa-dharmachakra"></i>
-                    <span>Kubernetes</span>
-                </a>
                 <a href="#logs" class="nav-item" data-page="logs">
                     <i class="fas fa-file-alt"></i>
                     <span>Logs</span>
@@ -118,8 +114,11 @@
                 </div>
             </div>
 
-            <!-- Server Status Page -->
-            <div id="server-status-page" class="page-content">
+            <!-- Dynamic Page Container - Lazy Loaded -->
+            <div id="page-container" class="page-content active">
+                <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+            </div>
+        </main>
                 <div class="grid-4">
                     <div class="card status-card">
                         <div class="card-body compact text-center">
@@ -241,27 +240,17 @@
 
             <!-- Overview Page -->
             <div id="overview-page" class="page-content active">
-                <!-- System Info Horizontal -->
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-info-circle"></i>
-                        <h3>System Information</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="system-info-horizontal" id="system-info-horizontal">
+                <div class="grid-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-server"></i>
+                            <h3>System</h3>
+                        </div>
+                        <div class="card-body compact">
                             <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
                         </div>
                     </div>
-                </div>
 
-                <!-- GPU Cards -->
-                <div id="gpu-cards-container" style="display: none;">
-                    <div class="grid-2" id="gpu-cards">
-                        <!-- GPU cards will be inserted here -->
-                    </div>
-                </div>
-
-                <div class="grid-4">
                     <div class="card">
                         <div class="card-header">
                             <i class="fas fa-microchip"></i>
@@ -286,16 +275,6 @@
                         <div class="card-header">
                             <i class="fas fa-hdd"></i>
                             <h3>Disk</h3>
-                        </div>
-                        <div class="card-body compact">
-                            <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-network-wired"></i>
-                            <h3>Network</h3>
                         </div>
                         <div class="card-body compact">
                             <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
@@ -334,88 +313,20 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-chart-bar"></i>
-                        <h3>CPU Per-Thread Usage</h3>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="cpuCoreChart" height="100"></canvas>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-chart-bar"></i>
-                        <h3>GPU Utilization</h3>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="gpuChart" height="100"></canvas>
-                    </div>
-                </div>
             </div>
 
             <!-- Hardware Page -->
             <div id="hardware-page" class="page-content">
-                <!-- Performance Metrics -->
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <h3>Performance Metrics</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="grid-4" id="hardware-performance">
-                            <div class="loading">Loading...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Thermal & Power -->
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-temperature-high"></i>
-                        <h3>Thermal & Power Status</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="grid-3" id="hardware-thermal">
-                            <div class="loading">Loading...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CPU Details -->
                 <div class="card">
                     <div class="card-header">
                         <i class="fas fa-microchip"></i>
                         <h3>CPU Information</h3>
                     </div>
-                    <div class="card-body">
-                        <div class="grid-3" id="hardware-cpu">
-                            <div class="loading">Loading...</div>
-                        </div>
+                    <div class="card-body" id="hardware-cpu">
+                        <div class="loading">Loading...</div>
                     </div>
                 </div>
 
-                <!-- GPU Cards -->
-                <div id="hardware-gpu-container" style="display: none;">
-                    <div class="grid-2" id="hardware-gpu-cards">
-                        <!-- GPU cards will be inserted here -->
-                    </div>
-                </div>
-
-                <!-- GPU Chart -->
-                <div class="card" id="hardware-gpu-chart-card" style="display: none;">
-                    <div class="card-header">
-                        <i class="fas fa-chart-bar"></i>
-                        <h3>GPU Utilization & Temperature</h3>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="gpuChartHardware" height="80"></canvas>
-                    </div>
-                </div>
-
-                <!-- Memory & Disk -->
                 <div class="grid-2">
                     <div class="card">
                         <div class="card-header">
@@ -441,65 +352,12 @@
 
             <!-- Network Page -->
             <div id="network-page" class="page-content">
-                <!-- Network Status Overview -->
-                <div class="grid-4">
-                    <div class="card status-card">
-                        <div class="card-body compact text-center">
-                            <div class="status-icon" id="net-monitor-status">
-                                <i class="fas fa-circle"></i>
-                            </div>
-                            <div class="status-label">Monitor Status</div>
-                            <div class="status-value" id="net-monitor-text">Active</div>
-                        </div>
-                    </div>
-                    
-                    <div class="card status-card">
-                        <div class="card-body compact text-center">
-                            <div class="status-icon" id="net-internet-status">
-                                <i class="fas fa-globe"></i>
-                            </div>
-                            <div class="status-label">Internet</div>
-                            <div class="status-value" id="net-internet-text">Checking...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="card status-card">
-                        <div class="card-body compact text-center">
-                            <div class="status-icon" id="net-device-status">
-                                <i class="fas fa-network-wired"></i>
-                            </div>
-                            <div class="status-label">Device Status</div>
-                            <div class="status-value" id="net-device-text">-</div>
-                        </div>
-                    </div>
-                    
-                    <div class="card status-card">
-                        <div class="card-body compact text-center">
-                            <div class="status-icon text-info">
-                                <i class="fas fa-exchange-alt"></i>
-                            </div>
-                            <div class="status-label">Active Connections</div>
-                            <div class="status-value" id="net-connections-count">-</div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="card">
                     <div class="card-header">
                         <i class="fas fa-network-wired"></i>
                         <h3>Network Interfaces</h3>
                     </div>
                     <div class="card-body" id="network-interfaces">
-                        <div class="loading">Loading...</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-chart-line"></i>
-                        <h3>Network Traffic Details</h3>
-                    </div>
-                    <div class="card-body" id="network-traffic-details">
                         <div class="loading">Loading...</div>
                     </div>
                 </div>
@@ -542,24 +400,6 @@
 
             <!-- Processes Page -->
             <div id="processes-page" class="page-content">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-tasks"></i>
-                        <h3>Process Manager</h3>
-                        <div style="margin-left: auto; display: flex; gap: 10px; align-items: center;">
-                            <input type="text" id="process-search" placeholder="Search processes..." style="padding: 6px 12px; border-radius: 6px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-primary);">
-                            <button onclick="refreshProcesses()" class="export-btn">
-                                <i class="fas fa-sync-alt"></i> Refresh
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div id="process-manager-table">
-                            <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading processes...</div>
-                        </div>
-                    </div>
-                </div>
-                
                 <div class="grid-2">
                     <div class="card">
                         <div class="card-header">
@@ -585,53 +425,6 @@
 
             <!-- Security Page -->
             <div id="security-page" class="page-content">
-                <!-- Security Score -->
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-shield-alt"></i>
-                        <h3>Security Overview</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="security-score" id="security-score-container">
-                            <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Security Details -->
-                <div class="grid-2">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-fire-alt"></i>
-                            <h3>Firewall Status</h3>
-                        </div>
-                        <div class="card-body" id="security-firewall">
-                            <div class="loading">Loading...</div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-shield-virus"></i>
-                            <h3>Antivirus/Defender</h3>
-                        </div>
-                        <div class="card-body" id="security-antivirus">
-                            <div class="loading">Loading...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Open Ports -->
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-network-wired"></i>
-                        <h3>Open Ports Analysis</h3>
-                    </div>
-                    <div class="card-body" id="security-ports">
-                        <div class="loading">Loading...</div>
-                    </div>
-                </div>
-
                 <div class="grid-2">
                     <div class="card">
                         <div class="card-header">
@@ -653,17 +446,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Suspicious Processes -->
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-bug"></i>
-                        <h3>Suspicious Processes</h3>
-                    </div>
-                    <div class="card-body" id="security-suspicious">
-                        <div class="loading">Loading...</div>
-                    </div>
-                </div>
             </div>
 
             <!-- Storage Page -->
@@ -674,16 +456,6 @@
                         <h3>Storage Details</h3>
                     </div>
                     <div class="card-body" id="storage-details">
-                        <div class="loading">Loading...</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-folder-open"></i>
-                        <h3>Storage Browser</h3>
-                    </div>
-                    <div class="card-body" id="storage-browser">
                         <div class="loading">Loading...</div>
                     </div>
                 </div>
@@ -708,41 +480,6 @@
                             <h3>Images</h3>
                         </div>
                         <div class="card-body" id="docker-images">
-                            <div class="loading">Loading...</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Kubernetes Page -->
-            <div id="kubernetes-page" class="page-content">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-dharmachakra"></i>
-                        <h3>Pods</h3>
-                    </div>
-                    <div class="card-body" id="k8s-pods">
-                        <div class="loading">Loading...</div>
-                    </div>
-                </div>
-
-                <div class="grid-2">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-network-wired"></i>
-                            <h3>Services</h3>
-                        </div>
-                        <div class="card-body" id="k8s-services">
-                            <div class="loading">Loading...</div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-cubes"></i>
-                            <h3>Deployments</h3>
-                        </div>
-                        <div class="card-body" id="k8s-deployments">
                             <div class="loading">Loading...</div>
                         </div>
                     </div>
@@ -784,12 +521,9 @@
         </main>
     </div>
 
-    <div class="footer-watermark">
-        System Monitor Dashboard by M. Nafiurohman
-        <span style="margin-left: 15px; opacity: 0.7;" id="app-version">mntr26.02.19-14.38</span>
-    </div>
+    <div class="footer-watermark">System Monitor Dashboard by M. Nafiurohman</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </body>
 </html>

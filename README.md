@@ -6,6 +6,7 @@ Professional server monitoring platform with modern dark blue glass morphism des
 ![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?logo=python)
 ![Flask](https://img.shields.io/badge/Flask-3.0-000000?logo=flask)
 ![Status](https://img.shields.io/badge/status-active-success)
+![Version](https://img.shields.io/badge/version-mntr26.02.19--14.38-blue)
 
 ## Screenshots
 
@@ -24,20 +25,41 @@ Professional server monitoring platform with modern dark blue glass morphism des
 ### Services Management
 ![Services](screenshots/5.png)
 
-### Process Monitoring
+### Process Manager
 ![Processes](screenshots/6.png)
 
 ### Security Monitoring
 ![Security](screenshots/7.png)
 
-### Storage Details
+### Storage Browser
 ![Storage](screenshots/8.png)
 
 ### Docker Management
 ![Docker](screenshots/9.png)
 
+### Kubernetes Monitoring
+![Kubernetes](screenshots/10.png)
+
 ### System Logs
-![Logs](screenshots/10.png)
+![Logs](screenshots/11.png)
+
+### CPU Per-Thread Chart
+![CPU Threads](screenshots/12.png)
+
+### GPU Monitoring
+![GPU](screenshots/13.png)
+
+### Performance Metrics
+![Performance](screenshots/14.png)
+
+### Thermal & Power
+![Thermal](screenshots/15.png)
+
+### Network Status Indicators
+![Network Status](screenshots/16.png)
+
+### Process Manager Detail
+![Process Detail](screenshots/17.png)
 
 ## Features
 
@@ -54,38 +76,74 @@ Professional server monitoring platform with modern dark blue glass morphism des
 
 #### Hardware Information
 - **CPU**: Model, cores, threads, frequency, temperature, cache size
-- **CPU Monitoring**: Per-core usage, load average, steal time
-- **Memory**: Total, used, free, buffers, cached
+- **CPU Monitoring**: Per-thread usage (all threads), load average, context switches
+- **GPU**: Multi-vendor support (NVIDIA/AMD/Intel), temperature, utilization, memory
+- **Memory**: Total, used, free, buffers, cached, shared, active, inactive
 - **SWAP**: Total, used, activity rate
+- **ZRAM**: Detection and monitoring (Linux)
 - **Disk**: Partitions, I/O rates, IOPS, SMART status
+
+#### Performance Deep Metrics
+- Context switch rate
+- Interrupt rate
+- File descriptor usage
+- Thread count
+- Zombie process detection
+- Resource limits (open files, processes, sockets)
+- Ephemeral port usage
+- Inode exhaustion monitoring
+
+#### Thermal & Power (Laptop Support)
+- CPU temperature monitoring
+- Thermal throttling detection
+- Battery status (percent, plugged, time left)
+- Power adapter status
+- Temperature alerts (Normal/Warning/Critical)
 
 #### Network Monitoring
 - Network interfaces with status
 - IP addresses (local & public)
 - MAC addresses & link speed
-- Traffic statistics (upload/download)
+- Traffic statistics (upload/download rate)
+- Packet rate (packets/second)
 - Packet errors & drops
 - TCP connections
-- Firewall status (UFW)
-- Open ports
+- Firewall status (UFW/iptables/Windows Defender)
+- Open ports with protocol (TCP/UDP)
+- Internet connectivity check
+- Network device status (Online/Offline)
+- Monitor system status
 
 #### Service Monitoring
 - Service status (running/stopped)
 - Boot enable status
 - PID & resource usage
-- Common services: Nginx, Apache, MySQL, PostgreSQL, Redis, Docker, SSH
+- Windows: W3SVC, MSSQLSERVER, MySQL, PostgreSQL, Redis, Docker, SSH
+- Linux: nginx, apache2, mysql, mariadb, postgresql, redis, ssh, docker, cron
+- Empty state with informative messages
 
 #### Process Monitoring
+- Task Manager style interface
+- Sortable columns (PID, Name, User, CPU%, Memory%, Threads, Status)
+- Search/filter functionality
 - Top CPU consuming processes
 - Top memory consuming processes
 - Zombie process detection
 - Total process count
+- Color-coded metrics
 
 #### Security Monitoring
+- Security score (0-100)
+- Firewall detection (UFW, iptables, Windows Defender)
+- Antivirus status (ClamAV, Windows Defender)
+- Open ports analysis with risk level (High/Medium/Low)
+- Port protocol detection (TCP/UDP)
+- Service and process name per port
 - Failed login attempts
 - Currently logged users
 - Login history
-- SUID files detection
+- Suspicious process detection
+- SUID files detection (Linux)
 - SELinux/AppArmor status
 
 #### Storage & Filesystem
@@ -94,6 +152,9 @@ Professional server monitoring platform with modern dark blue glass morphism des
 - Filesystem types
 - Read/write statistics
 - SMART health status
+- Storage browser with dropdown
+- Large file detection (>100MB)
+- Directory tree navigation
 
 #### Docker Monitoring
 - Container list & status
@@ -101,23 +162,58 @@ Professional server monitoring platform with modern dark blue glass morphism des
 - Image list & sizes
 - Port mappings
 
+#### Kubernetes Monitoring
+- Pods status and health
+- Services and endpoints
+- Deployments and replicas
+- Nodes information
+
 #### Log Monitoring
 - System logs (syslog)
 - Authentication logs
 - Kernel logs
 - Real-time log viewing
+- Export to JSON (offline, no internet required)
 
 ### Modern UI/UX
 - Dark blue glass morphism design
 - Responsive layout (mobile, tablet, desktop)
+- Full-screen optimized layout
 - Font Awesome icons
 - Color-coded status indicators
 - Smooth animations
-- Auto-refresh every 1 second
-- Real-time interactive charts (CPU, Memory, Network)
+- Auto-refresh every 3 seconds (anti-panas)
+- Tab visibility detection (pause when hidden)
+- Real-time interactive charts (CPU, Memory, Network, GPU)
+- Per-thread CPU monitoring chart
+- GPU utilization and temperature charts
 - Clean and minimal interface
-- Export logs to JSON
+- Export logs to JSON (offline)
 - Protected author information
+- Version display (terminal & web)
+- Loading indicators on all pages
+- Empty state messages
+- Horizontal system info layout
+- GPU cards (auto-show if available)
+- Performance metrics dashboard
+- Thermal and power monitoring
+- Network status indicators
+
+## 📚 Documentation
+
+**Complete HTML documentation available in `docs/` folder.**
+
+Open `docs/index.html` in your browser to access:
+- Quick Start Guide
+- Features Overview  
+- Installation Guide
+- Configuration
+- API Reference
+- Troubleshooting
+- Performance Guide
+- Security Guide
+- Packaging Guide (.deb/.tar.xz/.exe)
+- Changelog
 
 ## Requirements
 
@@ -128,7 +224,30 @@ Professional server monitoring platform with modern dark blue glass morphism des
 
 ## Installation
 
-### Quick Install
+### Option 1: Package Installation (Recommended)
+
+**Linux (.deb):**
+```bash
+sudo dpkg -i system-monitor_26.02.19-14.38.deb
+monitor
+```
+
+**Linux (.tar.xz):**
+```bash
+tar -xJf system-monitor-26.02.19-14.38.tar.xz
+cd system-monitor-26.02.19-14.38
+./install.sh
+./monitor
+```
+
+**Windows (.exe):**
+```
+Double-click SystemMonitor-26.02.19-14.38.exe
+```
+
+### Option 2: From Source
+
+**Quick Install:**
 
 ```bash
 git clone https://github.com/nafiurohman/system-monitoringing.git
@@ -145,6 +264,14 @@ source ~/.bashrc
 Then start the monitor:
 ```bash
 monitor
+```
+
+### Option 3: Create Your Own Package
+
+**See documentation:** `docs/index.html` → Packaging Guide
+
+```bash
+python3 package.py [deb|tar|exe|all]
 ```
 
 ### Manual Install
@@ -332,14 +459,15 @@ setInterval(loadAllData, 1000);  // 1000ms = 1 second
 
 1. **Overview** - System identity, CPU, memory, disk, network summary with real-time charts
 2. **Server Status** - Server health, running services, listening ports, system alerts
-3. **Hardware** - Detailed CPU, memory (including ZRAM), and disk information
-4. **Network** - Network interfaces, connections, firewall
+3. **Hardware** - Performance metrics, thermal status, CPU, GPU, memory, and disk information
+4. **Network** - Network status (4 indicators), interfaces, connections, firewall
 5. **Services** - System services status and management
-6. **Processes** - Top CPU and memory consuming processes
-7. **Security** - Login attempts, logged users, security status
-8. **Storage** - Detailed storage and filesystem information
+6. **Processes** - Process Manager (Task Manager style) with search/sort
+7. **Security** - Security score, firewall, antivirus, ports analysis, failed logins
+8. **Storage** - Storage browser with dropdown, large files detection
 9. **Docker** - Container and image monitoring
-10. **Logs** - System and authentication logs with JSON export
+10. **Kubernetes** - Pods, services, deployments monitoring
+11. **Logs** - System and authentication logs with JSON export
 
 ## Troubleshooting
 
@@ -438,18 +566,22 @@ Your support helps maintain and improve this project!
 
 ## Changelog
 
-### Version 2.0.0 (Latest)
-- Complete rewrite from PHP to Python + Flask
-- Modern dark blue glass morphism design
-- Enhanced system monitoring capabilities
-- Real-time data updates
-- Improved performance with caching
-- RESTful API endpoints
-- Responsive design for all devices
-- Global command installation support
-
-### Version 1.0.0
-- Initial release with PHP + Python hybrid architecture
+### Version mntr26.02.19-14.38 (Latest)
+- Complete rewrite with modular architecture
+- CPU per-thread monitoring (all threads)
+- GPU cards + dual chart (NVIDIA/AMD/Intel)
+- Network status (4 indicators: Monitor/Internet/Device/Connections)
+- Performance deep metrics (context switches, interrupts, file descriptors)
+- Thermal & power monitoring (CPU temp, battery, throttling)
+- Process Manager (Task Manager style with search/sort/refresh)
+- Security monitoring (score, firewall, antivirus, ports analysis)
+- Storage browser (dropdown + large files detection)
+- Services with empty state messages
+- JSON export (offline, no internet required)
+- Full-screen optimized layout
+- HTML documentation (versioned, white theme)
+- Packaging support (.deb/.tar.xz/.exe)
+- Windows & Linux compatible
 
 ---
 

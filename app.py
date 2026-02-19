@@ -14,7 +14,7 @@ MIT License
 DO NOT REMOVE THIS COPYRIGHT NOTICE
 """
 
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 import psutil
 import platform
 import socket
@@ -26,6 +26,21 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 import re
 import logging
+
+# Import modular components for better performance
+from modules.cpu import get_cpu_info
+from modules.memory import get_memory_info
+from modules.gpu import get_gpu_info
+from modules.security import get_security_info as get_security_info_enhanced
+from modules.processes import get_process_list, get_process_summary
+from modules.storage import get_directory_tree, find_large_files, get_storage_summary
+from modules.network_enhanced import get_network_traffic_details, get_network_connections_detailed
+from modules.kubernetes import get_k8s_pods, get_k8s_services, get_k8s_deployments, get_k8s_nodes, is_k8s_available
+from modules.performance import get_performance_metrics, get_resource_limits, get_thermal_power, check_internet_connectivity
+from utils.helpers import run_cmd, IS_WINDOWS
+
+# Version
+VERSION = "mntr26.02.19-14.38"
 
 # Disable Flask default logging
 log = logging.getLogger('werkzeug')
@@ -49,12 +64,9 @@ def get_cached(key, func):
     return data
 
 def run_cmd(cmd):
-    """Jalankan command shell"""
-    try:
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=5)
-        return result.stdout.strip()
-    except:
-        return ""
+    """Jalankan command shell - DEPRECATED, use utils.helpers.run_cmd"""
+    from utils.helpers import run_cmd as helper_run_cmd
+    return helper_run_cmd(cmd)
 
 # ==================== SYSTEM INFO ====================
 def get_system_info():
@@ -88,100 +100,8 @@ def get_system_info():
         return {'error': str(e)}
 
 # ==================== HARDWARE ====================
-def get_cpu_info():
-    """Informasi CPU lengkap"""
-    try:
-        cpu_freq = psutil.cpu_freq()
-        cpu_percent = psutil.cpu_percent(interval=1, percpu=True)
-        load_avg = psutil.getloadavg()
-        
-        # CPU model
-        cpu_model = run_cmd("lscpu | grep 'Model name' | cut -d':' -f2 | xargs")
-        
-        # CPU temperature
-        try:
-            temps = psutil.sensors_temperatures()
-            cpu_temp = temps.get('coretemp', [{}])[0].current if 'coretemp' in temps else 0
-        except:
-            cpu_temp = 0
-        
-        # Cache size
-        cache_size = run_cmd("lscpu | grep 'L3 cache' | awk '{print $3}'")
-        
-        # CPU steal time (untuk VM)
-        cpu_times = psutil.cpu_times_percent(interval=1)
-        steal_time = getattr(cpu_times, 'steal', 0)
-        
-        return {
-            'model': cpu_model,
-            'cores': psutil.cpu_count(logical=False),
-            'threads': psutil.cpu_count(logical=True),
-            'frequency': {
-                'current': cpu_freq.current if cpu_freq else 0,
-                'min': cpu_freq.min if cpu_freq else 0,
-                'max': cpu_freq.max if cpu_freq else 0
-            },
-            'usage_per_core': cpu_percent,
-            'usage_total': psutil.cpu_percent(interval=1),
-            'load_average': {
-                '1min': load_avg[0],
-                '5min': load_avg[1],
-                '15min': load_avg[2]
-            },
-            'steal_time': steal_time,
-            'temperature': cpu_temp,
-            'cache_size': cache_size
-        }
-    except Exception as e:
-        return {'error': str(e)}
-
-def get_memory_info():
-    """Informasi RAM, SWAP, dan ZRAM"""
-    try:
-        mem = psutil.virtual_memory()
-        swap = psutil.swap_memory()
-        
-        # Check for zram
-        zram_devices = []
-        try:
-            zram_info = run_cmd("zramctl --output NAME,DISKSIZE,DATA,COMPR,TOTAL --raw --noheadings")
-            if zram_info:
-                for line in zram_info.split('\n'):
-                    if line.strip():
-                        parts = line.split()
-                        if len(parts) >= 5:
-                            zram_devices.append({
-                                'device': parts[0],
-                                'disksize': parts[1],
-                                'data': parts[2],
-                                'compr': parts[3],
-                                'total': parts[4]
-                            })
-        except:
-            pass
-        
-        return {
-            'ram': {
-                'total': mem.total,
-                'used': mem.used,
-                'free': mem.free,
-                'available': mem.available,
-                'percent': mem.percent,
-                'buffers': getattr(mem, 'buffers', 0),
-                'cached': getattr(mem, 'cached', 0)
-            },
-            'swap': {
-                'total': swap.total,
-                'used': swap.used,
-                'free': swap.free,
-                'percent': swap.percent,
-                'sin': swap.sin,
-                'sout': swap.sout
-            },
-            'zram': zram_devices
-        }
-    except Exception as e:
-        return {'error': str(e)}
+# CPU and Memory now use modular imports
+# See modules/cpu.py and modules/memory.py
 
 def get_disk_info():
     """Informasi disk lengkap"""
@@ -317,29 +237,51 @@ def get_processes_info():
 
 # ==================== SERVICES ====================
 def get_services_info():
-    """Informasi services"""
+    """Informasi services - Windows & Linux compatible"""
     try:
-        services = ['nginx', 'apache2', 'mysql', 'mariadb', 'postgresql', 'redis', 'php-fpm', 'ssh', 'docker', 'cron']
         service_list = []
         
-        for svc in services:
-            status = run_cmd(f"systemctl is-active {svc} 2>/dev/null")
-            enabled = run_cmd(f"systemctl is-enabled {svc} 2>/dev/null")
-            
-            if status or enabled:
-                # Get PID
-                pid = run_cmd(f"systemctl show {svc} --property=MainPID --value")
+        if IS_WINDOWS:
+            # Windows services
+            services = ['W3SVC', 'MSSQLSERVER', 'MySQL', 'postgresql-x64-14', 'Redis', 'Docker', 'sshd']
+            for svc in services:
+                try:
+                    status = run_cmd(f'sc query "{svc}" | findstr STATE')
+                    if status:
+                        is_running = 'RUNNING' in status
+                        service_list.append({
+                            'name': svc,
+                            'status': 'active' if is_running else 'inactive',
+                            'enabled': 'enabled',
+                            'pid': 'N/A'
+                        })
+                except:
+                    pass
+        else:
+            # Linux services
+            services = ['nginx', 'apache2', 'mysql', 'mariadb', 'postgresql', 'redis', 'php-fpm', 'ssh', 'docker', 'cron']
+            for svc in services:
+                status = run_cmd(f"systemctl is-active {svc} 2>/dev/null")
+                enabled = run_cmd(f"systemctl is-enabled {svc} 2>/dev/null")
                 
-                service_list.append({
-                    'name': svc,
-                    'status': status,
-                    'enabled': enabled,
-                    'pid': pid
-                })
+                if status or enabled:
+                    # Get PID
+                    pid = run_cmd(f"systemctl show {svc} --property=MainPID --value")
+                    
+                    service_list.append({
+                        'name': svc,
+                        'status': status,
+                        'enabled': enabled,
+                        'pid': pid
+                    })
         
-        return {'services': service_list}
+        return {
+            'services': service_list,
+            'total': len(service_list),
+            'running': len([s for s in service_list if s['status'] == 'active'])
+        }
     except Exception as e:
-        return {'error': str(e)}
+        return {'error': str(e), 'services': [], 'total': 0, 'running': 0}
 
 # ==================== SECURITY ====================
 def get_security_info():
@@ -581,7 +523,19 @@ def api_services():
 
 @app.route('/api/security')
 def api_security():
-    return jsonify(get_cached('security', get_security_info))
+    return jsonify(get_cached('security', get_security_info_enhanced))
+
+@app.route('/api/gpu')
+def api_gpu():
+    return jsonify(get_cached('gpu', get_gpu_info))
+
+@app.route('/api/process-list')
+def api_process_list():
+    return jsonify(get_process_list())
+
+@app.route('/api/process-summary')
+def api_process_summary():
+    return jsonify(get_cached('process_summary', get_process_summary))
 
 @app.route('/api/docker')
 def api_docker():
@@ -602,16 +556,88 @@ def api_all():
         'system': get_cached('system', get_system_info),
         'cpu': get_cached('cpu', get_cpu_info),
         'memory': get_cached('memory', get_memory_info),
+        'gpu': get_cached('gpu', get_gpu_info),
         'disk': get_cached('disk', get_disk_info),
         'network': get_cached('network', get_network_info),
         'processes': get_cached('processes', get_processes_info),
+        'process_summary': get_cached('process_summary', get_process_summary),
         'services': get_cached('services', get_services_info),
-        'security': get_cached('security', get_security_info),
+        'security': get_cached('security', get_security_info_enhanced),
         'docker': get_cached('docker', get_docker_info),
         'server_status': get_cached('server_status', get_server_status)
     })
 
+@app.route('/api/storage/tree')
+def api_storage_tree():
+    path = request.args.get('path', '/')
+    max_depth = int(request.args.get('depth', 2))
+    return jsonify(get_directory_tree(path, max_depth))
+
+@app.route('/api/storage/large-files')
+def api_large_files():
+    path = request.args.get('path', '/')
+    min_size = int(request.args.get('min_size', 100))
+    return jsonify(find_large_files(path, min_size))
+
+@app.route('/api/storage/summary')
+def api_storage_summary():
+    return jsonify(get_cached('storage_summary', get_storage_summary))
+
+@app.route('/api/network/traffic')
+def api_network_traffic():
+    return jsonify(get_network_traffic_details())
+
+@app.route('/api/network/connections')
+def api_network_connections():
+    return jsonify(get_network_connections_detailed())
+
+@app.route('/api/k8s/pods')
+def api_k8s_pods():
+    return jsonify(get_cached('k8s_pods', get_k8s_pods))
+
+@app.route('/api/k8s/services')
+def api_k8s_services():
+    return jsonify(get_cached('k8s_services', get_k8s_services))
+
+@app.route('/api/k8s/deployments')
+def api_k8s_deployments():
+    return jsonify(get_cached('k8s_deployments', get_k8s_deployments))
+
+@app.route('/api/k8s/nodes')
+def api_k8s_nodes():
+    return jsonify(get_cached('k8s_nodes', get_k8s_nodes))
+
+@app.route('/api/k8s/available')
+def api_k8s_available():
+    return jsonify({'available': is_k8s_available()})
+
+@app.route('/api/version')
+def api_version():
+    return jsonify({'version': VERSION})
+
+@app.route('/api/performance')
+def api_performance():
+    return jsonify(get_cached('performance', get_performance_metrics))
+
+@app.route('/api/resource-limits')
+def api_resource_limits():
+    return jsonify(get_cached('resource_limits', get_resource_limits))
+
+@app.route('/api/thermal')
+def api_thermal():
+    return jsonify(get_cached('thermal', get_thermal_power))
+
+@app.route('/api/internet')
+def api_internet():
+    return jsonify(check_internet_connectivity())
+
 if __name__ == '__main__':
-    print("Starting System Monitor Dashboard...")
-    print("Access at: http://127.0.0.1:9999")
+    print("="*60)
+    print("System Monitor Dashboard")
+    print(f"Version: {VERSION}")
+    print("Author: M. Nafiurohman")
+    print("="*60)
+    print(f"Starting server at: http://127.0.0.1:9999")
+    print("Press Ctrl+C to stop")
+    print("="*60)
     app.run(host='127.0.0.1', port=9999, debug=False)

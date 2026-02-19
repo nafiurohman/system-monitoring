@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test</title></head>
+<body>
+<div id="page-container">Loading...</div>
+<script src="static/js/page-loader.js"></script>
+<script>
+setTimeout(() => {
+    console.log('Testing loadPage...');
+    if (typeof loadPage === 'function') {
+        loadPage('overview');
+        console.log('✅ loadPage called');
+    } else {
+        console.error('❌ loadPage not found');
+    }
+}, 100);
+</script>
+</body>
+</html>
