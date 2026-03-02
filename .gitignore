@@ -33,9 +33,6 @@ Thumbs.db
 .env
 .env.local
 
-# Documentation (optional)
-CHECKLIST.md
-GITHUB_SETUP.md
-PROJECT_STRUCTURE.md
-FINAL_UPDATE.md
-FINAL_COMPLETE.md
+# BMonitor config (local dev)
+config/
+users.json
